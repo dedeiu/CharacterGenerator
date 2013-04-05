@@ -87,7 +87,7 @@ namespace CharacterGenerator
             {
                 if ((index % this.charArraySize) == 0 && index != 0)
                 {
-                    System.Console.WriteLine("Write {0} to file {1}.", i, this.filePath);
+                    System.Console.WriteLine("{0}", i);
                     this.SaveCodes(charArray);
                     charArray = new string[this.charArraySize];
                     index = 0;
