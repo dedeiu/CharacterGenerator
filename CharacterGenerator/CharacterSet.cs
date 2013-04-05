@@ -64,7 +64,7 @@ namespace CharacterGenerator
         public CharacterSet()
         {
             this.charByteStringLength = 5;
-            this.loopDelay = 99;
+            this.loopDelay = 9999;
             this.filePath = System.AppDomain.CurrentDomain.BaseDirectory + string.Format(@"{0}", Guid.NewGuid());
         }
         #endregion
@@ -82,7 +82,7 @@ namespace CharacterGenerator
             string[] charArray = new string[this.charArraySize];
 
             int index = 0;
-            int combination = 0;
+            Int64 combination = 0;
             for (int i = 0; i < this.charNumber; i++)
             {
                 if ((index % this.charArraySize) == 0 && index != 0)
@@ -93,8 +93,9 @@ namespace CharacterGenerator
                     index = 0;
                 }
 
-                var limit = combination + this.loopDelay;
-                combination = this.randomCombination.Next(combination, limit);
+                Int64 limit = combination + this.loopDelay;
+
+                combination = this.GetRandomNumber(combination, limit);
                 charArray[index] = this.BuildCharSet(combination);
                 combination = limit + 1;
                 index++;
@@ -108,6 +109,11 @@ namespace CharacterGenerator
         #endregion
 
         #region private methods
+        private Int64 GetRandomNumber(Int64 minimum, Int64 maximum)
+        {
+            return (Int64)this.randomCombination.NextDouble() * (maximum - minimum) + minimum;
+        }
+
         private string BuildCharSet(Int64 combination)
         {
             string byteString = String.Empty;
