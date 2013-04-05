@@ -10,7 +10,7 @@ namespace CharacterGenerator
     public class CharacterSet
     {
         #region private variables
-        private int charLength = 8;
+        private int charLength = 7;
         private int charByteStringLength = 0;
         private int loopDelay = 1;
         /// <summary>
@@ -28,6 +28,7 @@ namespace CharacterGenerator
         private StreamWriter file;
         private string filePath;
         private int charArraySize = 1000;
+        private Random randomCombination = new Random();
         #endregion
 
         #region public variables
@@ -63,7 +64,7 @@ namespace CharacterGenerator
         public CharacterSet()
         {
             this.charByteStringLength = 5;
-            this.loopDelay = 1000000000;
+            this.loopDelay = 99;
             this.filePath = System.AppDomain.CurrentDomain.BaseDirectory + string.Format(@"{0}", Guid.NewGuid());
         }
         #endregion
@@ -74,13 +75,14 @@ namespace CharacterGenerator
             Stopwatch sw = Stopwatch.StartNew();
             sw.Start();
 
-            file = new StreamWriter(this.filePath);
+            this.file = new StreamWriter(this.filePath);
 
-            file.WriteLine("Started at: - {0}", sw.Elapsed);
+            this.file.WriteLine("Started at: - {0}", sw.Elapsed);
 
             string[] charArray = new string[this.charArraySize];
 
             int index = 0;
+            int combination = 0;
             for (int i = 0; i < this.charNumber; i++)
             {
                 if ((index % this.charArraySize) == 0 && index != 0)
@@ -91,19 +93,22 @@ namespace CharacterGenerator
                     index = 0;
                 }
 
-                charArray[index] = this.BuildCharSet(i + this.loopDelay);
+                var limit = combination + this.loopDelay;
+                combination = this.randomCombination.Next(combination, limit);
+                charArray[index] = this.BuildCharSet(combination);
+                combination = limit + 1;
                 index++;
             }
             this.SaveCodes(charArray);
 
             sw.Stop();
-            file.WriteLine("Finished at: - {0}", sw.Elapsed);
-            file.Close();
+            this.file.WriteLine("Finished at: - {0}", sw.Elapsed);
+            this.file.Close();
         }
         #endregion
 
         #region private methods
-        private string BuildCharSet(int combination)
+        private string BuildCharSet(Int64 combination)
         {
             string byteString = String.Empty;
             byteString = Convert.ToString(combination, 2);
@@ -132,7 +137,7 @@ namespace CharacterGenerator
         {
             foreach (string charCode in charArray)
             {
-                file.WriteLine(charCode);
+                this.file.WriteLine(charCode);
             }
         }
         #endregion
